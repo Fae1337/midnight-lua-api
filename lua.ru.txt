@@ -1,0 +1,272 @@
+
+
+
+<b>Общее</b>
+
+Скрипты должны находиться в папке `Мои документы / scpsl / lua`.
+Нажмите кнопку RELOAD во вкладке меню LUA, чтобы перезагрузить все скрипты.
+
+
+<b>Функции обратного вызова</b>
+(чит вызывает их САМ)
+
+
+<code>
+function on_gui()
+
+  -- тут рисуем текст, текстуры и прочее
+  -- все просчёты, поиск цели, математику и прочее следует делать в функции ниже
+
+end
+</code>
+
+
+<code>
+function on_update()
+
+  -- тут считаем математику, ищем цель аимбота и прочее
+  -- в этой функции рисовать НЕЛЬЗЯ (просто не будет работать)
+
+end
+</code>
+
+
+
+<b>Класс SCREEN</b>
+
+<code>c_screen.get_mouse_position()</code>
+возвращает: {x: INT, y: INT}
+
+<code>c_screen.is_mouse_click()</code>
+возвращает: boolean
+
+<code>c_screen.resolution()</code>
+возвращает: {width: INT, height: INT, center_x: INT, center_y: INT}
+
+<code>c_screen.world_to_screen( vec3 )</code>
+аргументы: vector table
+возвращает: {x: INT, y: INT, is_on_screen: boolean}
+
+
+<b>Класс GUI</b>
+
+<code>c_gui.label( x, y, width, height, text )</code>
+аргументы: int, int, int, int, text
+возвращает: {x: INT, y: INT}
+
+<code>c_gui.line( x, y, x2, y2, color, thickness )</code>
+аргументы: int, int, int, int, {r, g, b, a}, float
+возвращает: nil
+
+пример: `c_gui.line(30, 30, 160, 160, {255, 255, 255, 255}, 2.0)`
+
+<code>c_gui.text_align( align )</code>
+аргументы: int
+possible values:
+<code>
+align_upper_left
+align_upper_center
+align_upper_right
+align_middle_left
+align_middle_center
+align_middle_right
+align_lower_left
+align_lower_center
+align_lower_right
+</code>
+
+<code>c_gui.texture( texture_or_null, x, y, width, height, { 1, 1, 1, 1 }, { 15, 15, 15, 15 }, { 15, 15, 15, 15 }, is_alpha_channel )</code>
+аргументы: int or nil, int, int, int, int, normalized_color_table, border_radius_table, border_width_table, boolean
+
+пример, прямоугольник с заливкой:
+<code>c_gui.texture(nil, 200, 200, 50, 50, {0, 1, 0, 1}, {1, 1, 1, 1}, {0, 0, 0, 0}, false)</code>
+
+пример, прямоугольник без заливки:
+<code>c_gui.texture(nil, 200, 200, 50, 50, {0, 1, 0, 1}, {3, 3, 3, 3}, {2, 2, 2, 2}, false)</code>
+
+пример, круг без заливки:
+<code>c_gui.texture(nil, 200, 200, 50, 50, {0, 1, 0, 1}, {50, 50, 50, 50}, {2, 2, 2, 2}, true)</code>
+
+<b>Класс CAMERA</b>
+
+<code>c_camera.get_position()</code>
+возвращает: vector table { x: INT, y: INT, z: INT }
+
+<code>c_camera.set_fov(float)</code>
+аргументы: float
+
+<code>c_camera.look_at( { INT, INT, INT }, float )</code>
+аргументы: vec3 list, float
+описание: поворачивает локальную камеру на указанную позицию с указанной плавностью
+
+
+<b>Класс PLAYER</b>
+
+<code>c_player.list()</code>
+возвращает: table filled with players
+
+
+<code>c_player.target_list()</code>
+возвращает: table filled with players suitable for aimbot calculation
+
+<code>c_player.has_aim_target()</code>
+возвращает: boolean
+
+<b>Игрок</b>
+
+
+<code>player:get_position()</code>
+возвращает: vector table { x: INT, y: INT, z: INT }
+
+<code>player:get_cloud_position()</code>
+возвращает: vector table { x: INT, y: INT, z: INT }
+
+<code>player:is_friend()</code>
+возвращает: boolean
+
+<code>player:set_friend(boolean)</code>
+аргументы: boolean
+возвращает: boolean
+
+<code>player.name</code>
+<code>player.visible</code>
+<code>player.model_visible</code>
+<code>player.health</code>
+<code>player.max_health</code>
+<code>player.armor</code>
+<code>player.max_armor</code>
+<code>player.netid</code>
+<code>player.is_local</code>
+
+<code>player.role</code>
+вернёт таблицу
+
+<code>player.role.id</code> - роль игрока
+<code>player.role.name</code> - название роли
+<code>player.role.color</code> - таблица цвета роли { r: INT, g: INT, b: INT, a: INT }
+<code>player.role.color_hex</code> - цвет роли в виде hex-строки ( можно подставить в gui.label внутрь <code>color=#hex</code> тега - читайте RichText Unit3d)
+<code>player.role.is_alive</code> - будет true, если цель в команде живых
+<code>player.role.is_scp</code> - будет true, если цель в команде scp
+<code>player.role.is_human</code> - будет true, если цель в команде людей
+
+
+<b>Список ролей для player.role</b>
+
+<code>
+role_undefined
+role_173
+role_class_d
+role_spectator
+role_106
+role_ntf_scientist
+role_049
+role_scientist
+role_079
+role_chaos_conscript
+role_096
+role_0492
+role_ntf_sergeant
+role_ntf_captain
+role_ntf_private
+role_tutorial
+role_guard
+role_939
+role_custom
+role_chaos_rifleman
+role_chaos_repressor
+role_chaos_marauder
+role_overwatch
+role_filmmaker
+role_3114
+role_flamingo
+role_alphaflamingo
+role_zombieflamingo
+</code>
+
+
+<b>КЛАСС ITEM</b>
+
+<code>c_item.list()</code>
+вернёт: таблицу, заполненную предметами
+
+
+<b>Предмет</b>
+
+
+<code>item.position</code>
+<code>item.icon</code>
+<code>item.item_id</code>
+
+<b>КЛАСС MENU</b>
+
+<code>c_menu.get_position(int)</code>
+вернёт: таблицу
+
+<code>item.x</code>
+<code>item.y</code>
+<code>item.width</code>
+<code>item.height</code>
+
+<code>c_menu.register_category(ln_table)</code>
+вернёт: таблицу
+
+<code>category:register_box(ln_table)</code>
+вернёт: таблицу
+
+<code>box:register_feature(int_uid, ln_table, e_bool, e_checkbox, int_min_value, int_max_value, int_default_value)</code>
+вернёт: -
+
+
+<b>константы для меню</b>
+
+<code>
+типы данных: e_bool, e_int, e_float, e_color
+виджеты: e_checkbox, e_slider, e_dropbox, e_colorpicker, e_label, e_button
+языки: e_en, e_ru, e_cn
+</code>
+
+
+<b>КЛАСС LANGUAGE</b>
+
+<code>c_ln.register_new()</code>
+вернёт: таблицу
+
+<code>item:set(e_en, "text")</code>
+
+
+<b>КЛАСС INPUT</b>
+
+<code>c_input.get_key(int)</code>
+вернёт: число
+
+
+<b>КЛАСС IL2CPP</b>
+
+<code>c_il2cpp.find_method(string_class_name, string_namespace, string_method_name, int paramcount = -1)</code>
+вернёт: указатель на метод
+
+пример: `local p_new_texture_created = c_il2cpp.find_method("Texture", "UnityEngine", ".ctor", -1)`
+
+
+<b>КЛАСС TEXTURE</b>
+
+<code>c_texture.create("name", width, height)</code>
+вернёт: таблицу
+
+<code>c_texture.set_poster(scripted_texture_table)</code>
+вернёт: -
+
+
+<b>Таблица TEXTURE</b>
+
+
+<code>texture.width</code>
+<code>texture.height</code>
+<code>texture.texture (int64 pointer)</code>
+<code>texture:set_pixel(x, y, color)</code>
+<code>texture:apply()</code>
+
+
+
+Ожидайте будущих обновлений..
+
